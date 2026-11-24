@@ -1,0 +1,2003 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d0c11">
+  <!-- Optional on GitHub Pages. Set to owner/repository when hosting the release elsewhere. -->
+  <meta name="nova-release-repository" content="">
+  <meta name="description" content="Activate a license key to access your Nova dashboard.">
+  <title>Nova — Access</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+      --base: #0d0c11;
+      --surface: #141218;
+      --text: #f3f0f6;
+      --muted: #a9a1b5;
+      --line: #302937;
+      --accent: #b293ff;
+      --button: #ac8bf8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--base); color: var(--text); line-height: 1.5; }
+    button, input, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; cursor: pointer; }
+    button:disabled { cursor: wait; opacity: .65; }
+    a { color: inherit; text-decoration: none; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    [hidden] { display: none !important; }
+
+    .frame { width: min(1200px, calc(100% - 96px)); margin-inline: auto; }
+    .topbar { border-bottom: 1px solid #26212c; background: #100e15; }
+    .topbar .frame { min-height: 70px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 18px; }
+    .brand, .dialog-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 750; letter-spacing: .16em; }
+    .brand { justify-self: start; font-size: 1.125rem; }
+    .mark { display: inline-block; position: relative; width: 29px; aspect-ratio: 690 / 640; flex: none; }
+    .mark span { position: absolute; inset: 0; background: linear-gradient(153deg, #ce99ff 10%, #a452ff 48%, #833ce4 67%, #d06dff); }
+    .mark span:nth-child(1) { clip-path: polygon(0 25%, 12.8% 15%, 12.8% 87%, 0 77%); }
+    .mark span:nth-child(2) { clip-path: polygon(16.7% 11.3%, 30.7% 0, 30.7% 23.8%, 84.3% 91%, 73.6% 99%, 30.7% 44.6%, 30.7% 100%, 16.7% 90%); }
+    .mark span:nth-child(3) { clip-path: polygon(33.6% 2.2%, 72.6% 50%, 72.6% 21%, 84.2% 12%, 84.2% 86%, 33.6% 22.5%); }
+    .mark span:nth-child(4) { clip-path: polygon(87.5% 9.5%, 100% 0, 100% 79%, 87.5% 89.5%); }
+
+    nav { display: flex; align-items: center; gap: 31px; font-size: .875rem; }
+    nav a { height: 70px; display: grid; align-items: center; position: relative; color: var(--muted); }
+    nav a:hover, nav a[aria-current] { color: var(--text); }
+    nav a[aria-current]::after { position: absolute; content: ""; inset: auto 0 -1px; height: 1px; background: var(--accent); }
+    .tools { justify-self: end; display: flex; align-items: center; gap: 8px; }
+
+    .button, .icon-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border: 1px solid #3c3147;
+      border-radius: 11px;
+      background: #19141f;
+      font-size: .875rem;
+      font-weight: 620;
+      transition: background .16s, border-color .16s, transform .16s;
+    }
+    .button { min-height: 43px; padding: 0 15px; white-space: nowrap; }
+    .icon-button { width: 38px; height: 38px; padding: 0; }
+    .tools .button { min-height: 38px; }
+    .button:hover, .icon-button:hover { background: #211829; border-color: #6b547d; }
+    .button:active, .icon-button:active { transform: translateY(1px); }
+    .button.primary { background: var(--button); border-color: transparent; color: #171020; }
+    .button.primary:hover { background: #c2aaff; }
+    .button svg, .icon-button svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.55; stroke-linecap: round; stroke-linejoin: round; }
+    .sound-off, #sound[aria-pressed="false"] .sound-on { display: none; }
+    #sound[aria-pressed="false"] .sound-off { display: block; }
+
+    .hero {
+      isolation: isolate;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      align-items: center;
+      min-height: clamp(520px, 68vh, 720px);
+      padding: 75px 0 85px;
+      background: radial-gradient(ellipse at 68% 0, #221a31 0%, #15111c 47%, #0d0c11 78%);
+      text-align: center;
+    }
+    .hero::before, .hero::after {
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+    }
+    .hero::before {
+      background: repeating-linear-gradient(132deg, #b18ad21b 0 1px, transparent 1px 14px);
+      clip-path: polygon(0 0, 32% 100%, 21% 100%, 0 43%);
+      mask-image: linear-gradient(0deg, transparent 5%, #000 93%);
+    }
+    .hero::after {
+      background: repeating-linear-gradient(132deg, #af8bd01a 0 1px, transparent 1px 14px), linear-gradient(132deg, #42285924, #5f3b7927 55%, #2516331a);
+      clip-path: polygon(85% 0, 100% 0, 100% 27%, 72% 100%, 63% 100%);
+      mask-image: linear-gradient(0deg, transparent 0%, #000 88%);
+    }
+    .hero h1 {
+      margin: 0;
+      font: 400 clamp(3.4rem, 8.3vw, 7.3rem)/.94 "Georgia", "Times New Roman", serif;
+      letter-spacing: -.065em;
+      text-wrap: balance;
+    }
+    .hero h1 span { display: block; color: #c2b2d9; }
+    .hero p { max-width: 37ch; margin: 26px auto 27px; color: var(--muted); font-size: 1.0625rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .hero-actions .button { min-height: 49px; padding-inline: 19px; font-size: .9375rem; }
+    .hero-actions .secondary { background: #16121b; }
+    .hero-actions .secondary:hover { background: #261a32; }
+
+    .licenses { scroll-margin-top: 22px; padding-bottom: 38px; }
+    .license-card {
+      display: grid;
+      grid-template-columns: minmax(230px, 1.3fr) 3fr;
+      gap: 22px;
+      align-items: center;
+      border-top: 1px solid #44354f;
+      border-bottom: 1px solid var(--line);
+      padding-block: 24px;
+    }
+    .license-head h2 { margin: 0 0 3px; font-size: 1rem; font-weight: 680; }
+    .license-head p { margin: 0; color: var(--muted); font-size: .875rem; }
+    .periods { display: grid; grid-template-columns: repeat(4, 1fr); padding: 0; margin: 0; list-style: none; }
+    .periods li { padding: 8px 6px; text-align: center; border-left: 1px solid var(--line); font-size: 1.0625rem; font-weight: 620; }
+    .info-section { scroll-margin-top: 22px; margin-bottom: 50px; padding-top: 10px; }
+    .info-section h2 { margin: 0 0 17px; font-size: clamp(1.75rem, 3.5vw, 2.6rem); letter-spacing: -.05em; }
+    .feature-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .feature-list article { padding: 19px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+    .feature-list h3 { margin: 0 0 6px; font-size: 1rem; }
+    .info-section p { margin: 0; color: var(--muted); }
+    .faq-list { border-top: 1px solid var(--line); }
+    .faq-list details { border-bottom: 1px solid var(--line); }
+    .faq-list summary { cursor: pointer; padding: 15px 3px; font-weight: 620; }
+    .faq-list summary::marker { color: var(--accent); }
+    .faq-list details p { padding: 0 3px 16px; }
+    footer { color: var(--muted); font-size: .8125rem; }
+    footer .frame { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 26px; }
+    footer a:hover { color: white; }
+
+    dialog {
+      width: min(442px, calc(100% - 28px));
+      max-height: calc(100dvh - 28px);
+      padding: 27px;
+      border: 1px solid #4b3a59;
+      border-radius: 19px;
+      background: #17121e;
+      color: var(--text);
+      box-shadow: 0 24px 75px #040307b3;
+      transition: width .27s cubic-bezier(.2,.7,.25,1), padding .27s;
+    }
+    dialog[open] { animation: open-panel .24s cubic-bezier(.2,.7,.25,1) both; }
+    dialog::backdrop { background: #09070cba; backdrop-filter: blur(5px); }
+    @keyframes open-panel { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+    @keyframes change-pane { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    .pane:not([hidden]), [data-pane="management"]:not([hidden]), .admin-page:not([hidden]) { animation: change-pane .22s ease-out both; }
+    .dialog-brand { font-size: .875rem; }
+    .dialog-brand .mark { width: 24px; }
+    #close { position: absolute; right: 16px; top: 15px; z-index: 1; }
+    .pane h2 { margin: 17px 0 5px; font-size: 1.875rem; line-height: 1.15; letter-spacing: -.045em; outline: none; }
+    .pane p { margin: 0 0 18px; color: var(--muted); font-size: .9375rem; }
+    form { display: grid; gap: 12px; }
+    label { display: grid; gap: 5px; font-size: .875rem; font-weight: 590; }
+    input, select {
+      min-height: 43px;
+      min-width: 0;
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid #43364e;
+      border-radius: 10px;
+      background: #100d15;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    input::placeholder { color: #a296ad; }
+    form .primary { margin-top: 3px; }
+    .pane-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 15px; }
+    .text-button { padding: 2px 0; border: 0; background: transparent; color: #cbafff; font-size: .875rem; }
+    .text-button:hover { text-decoration: underline; }
+    #notice { margin: 13px 0 0; color: #deccff; font-size: .875rem; }
+    #notice:empty { position: absolute; clip-path: inset(50%); margin: 0; }
+    #notice[data-error="true"] { color: #ffb4cb; }
+    .player-profile { display: flex; align-items: center; gap: 13px; margin: 18px 0; }
+    .player-avatar { display: grid; place-items: center; flex: none; width: 46px; height: 46px; border: 1px solid #554169; border-radius: 15px; background: #282033; color: #dbc7ff; font-weight: 750; }
+    .player-profile p { margin: 0; overflow-wrap: anywhere; }
+    #account-name { color: var(--text); font-size: 1rem; font-weight: 660; }
+    #license-status { color: #b9d6c5; }
+    progress { width: 100%; height: 6px; margin-bottom: 5px; appearance: none; border: 0; border-radius: 10px; accent-color: var(--accent); }
+    progress::-webkit-progress-bar { background: #2b2435; border-radius: 10px; }
+    progress::-webkit-progress-value { background: var(--accent); border-radius: 10px; transition: width .3s; }
+    progress::-moz-progress-bar { background: var(--accent); border-radius: 10px; }
+    .player-history { padding: 4px 0 0 4px; }
+    .player-history ol { list-style: none; margin: 0; padding: 0; }
+    .player-history li { display: grid; gap: 2px; padding: 9px 0; border-top: 1px solid var(--line); font-size: .875rem; }
+    .player-history time { color: var(--muted); font-size: .8125rem; }
+    .player-history p { margin: 0; }
+    .dashboard {
+      min-height: 100dvh;
+      padding: 25px 0 50px;
+      background:
+        radial-gradient(circle at 93% 17%, #50327236, transparent 28rem),
+        radial-gradient(circle at 12% 78%, #30264d60, transparent 38rem),
+        linear-gradient(142deg, #100c19 0%, #1a1428 56%, #12101d 100%);
+    }
+    .dashboard .frame { width: min(1130px, calc(100% - 44px)); }
+    .dashboard-header { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-bottom: 17px; border-bottom: 1px solid #a88ac332; }
+    .dashboard-brand { display: flex; align-items: center; gap: 12px; font-weight: 690; }
+    .dashboard-brand span:last-child { color: var(--muted); font-size: .875rem; font-weight: 550; }
+    .dashboard-header #logout { margin: 0; }
+    .dashboard-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 20px; align-items: start; margin-top: 23px; }
+    .dashboard-side, .dashboard-content { border: 1px solid #b595d72c; border-radius: 18px; background: #1b1527de; }
+    .dashboard-side { padding: 15px 12px; }
+    .dashboard-side .player-profile { margin: 0 0 12px; padding: 3px 3px 13px; border-bottom: 1px solid var(--line); }
+    .dashboard-side .player-profile p { font-size: .8125rem; color: var(--muted); }
+    .player-avatar { overflow: hidden; }
+    .player-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .dashboard-nav { display: grid; gap: 4px; }
+    .dashboard-nav hr { width: 100%; margin: 5px 0; border: 0; border-top: 1px solid #b595d73d; }
+    .dashboard-nav button { text-align: left; background: transparent; color: var(--muted); border: 1px solid transparent; border-radius: 9px; padding: 8px 11px; font-size: .875rem; }
+    .dashboard-nav button:hover { background: #2b2038; color: var(--text); }
+    .dashboard-nav button[aria-current="page"] { color: #eadcff; background: #302341; border-color: #634783; }
+    .dashboard-content { padding: clamp(17px, 3vw, 29px); min-width: 0; }
+    .dashboard-page:not([hidden]) { animation: change-pane .22s ease-out both; }
+    .dashboard-page h1 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.15rem); letter-spacing: -.045em; }
+    .dashboard-page h1:focus { outline: none; }
+    .dashboard-lead { margin: 4px 0 19px; color: var(--muted); }
+    .dashboard-metrics { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 10px; margin: 0 0 14px; }
+    .dashboard-metrics > div, .dashboard-card { min-width: 0; border: 1px solid var(--line); border-radius: 13px; padding: 15px; background: #161120; }
+    .dashboard-metrics dt { color: var(--muted); font-size: .8125rem; }
+    .dashboard-metrics dd { margin: 5px 0 0; font-weight: 650; overflow-wrap: anywhere; }
+    #license-status[data-expired="true"] { color: #ffb4cb; }
+    .dashboard-card { margin: 11px 0; }
+    .dashboard-card h2 { margin: 0 0 6px; font-size: 1.05rem; }
+    .dashboard-card p { margin: 0 0 11px; color: var(--muted); font-size: .875rem; }
+    .dashboard-card form { max-width: 420px; }
+    .dashboard-card form .button { justify-self: start; }
+    .license-line { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
+    .license-line code { overflow-wrap: anywhere; color: #e2d0ff; }
+    .dashboard-note { padding: 13px; border-radius: 9px; background: #2b1b2d; color: #f8c3dc; margin: 0 0 14px; }
+    .dashboard-note .text-button { font-weight: 650; margin-left: 8px; }
+    #player-notice { margin: 0 0 12px; color: #e3caff; font-size: .875rem; }
+    #player-notice:empty { margin: 0; }
+    #player-notice:not(:empty) { position: sticky; top: 9px; z-index: 1; padding: 9px 12px; border: 1px solid #6f5086; border-radius: 9px; background: #2a1e38; }
+    #player-notice[data-error="true"] { color: #ffb4cb; }
+    .download-list { list-style: none; padding: 0; margin: 9px 0; }
+    .download-list li { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; padding-block: 9px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+    #logout { margin-top: 16px; }
+
+    dialog.expanded { width: min(890px, calc(100% - 28px)); padding: 0; background: #15111b; }
+    dialog.expanded > .dialog-brand { display: none; }
+    .admin-head { min-height: 67px; display: flex; align-items: center; gap: 11px; padding: 12px 64px 12px 23px; border-bottom: 1px solid var(--line); }
+    .admin-head h2 { margin: 0; font-size: 1.125rem; letter-spacing: -.015em; }
+    .admin-body { display: grid; grid-template-columns: 176px minmax(0, 1fr); min-height: 360px; }
+    .admin-sidebar { display: flex; flex-direction: column; gap: 26px; padding: 19px 11px 16px; border-right: 1px solid var(--line); background: #110e16; }
+    .tabs { display: grid; gap: 5px; }
+    .tabs button { text-align: left; border: 1px solid transparent; border-radius: 9px; background: transparent; padding: 9px 10px; color: var(--muted); font-size: .875rem; font-weight: 620; transition: background .16s, border-color .16s, color .16s; }
+    .tabs button:hover { color: var(--text); background: #21182a; }
+    .tabs button[aria-selected="true"] { background: #252031; border-color: #48385a; color: #e5d5fc; }
+    .admin-sidebar [data-back] { margin-top: auto; text-align: left; padding-inline: 9px; }
+    .admin-page { padding: 23px; min-width: 0; }
+    .admin-description { margin: 6px 0 16px; color: var(--muted); font-size: .875rem; }
+    .list-header { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; justify-content: space-between; }
+    .picker { position: relative; display: grid; gap: 5px; min-width: 0; }
+    .picker-caption { font-size: .875rem; font-weight: 590; }
+    .picker-trigger { width: 100%; justify-content: space-between; text-align: left; background: #120f18; }
+    .picker-trigger::after { content: ""; width: 7px; height: 7px; margin: 0 3px 3px 8px; border: solid var(--muted); border-width: 0 1px 1px 0; transform: rotate(45deg); transition: transform .16s; }
+    .picker-trigger[aria-expanded="true"]::after { transform: translateY(4px) rotate(225deg); }
+    .picker-list { display: grid; gap: 2px; padding: 5px; border: 1px solid #4c3b5b; border-radius: 12px; background: #1c1624; animation: change-pane .15s ease-out both; }
+    .picker-list button { border: 1px solid transparent; border-radius: 8px; padding: 7px 10px; text-align: left; color: var(--muted); background: transparent; }
+    .picker-list button:hover, .picker-list button:focus-visible { background: #2b2136; color: var(--text); }
+    .picker-list button[aria-pressed="true"] { background: #30243d; color: #f0e6ff; }
+    .picker-hint { margin: 0; color: var(--muted); font-size: .8125rem; }
+    .key-filter { min-width: 135px; }
+    .key-filter .picker-trigger { min-height: 36px; }
+    .key-filter .picker-list { position: absolute; z-index: 2; inset: calc(100% + 4px) 0 auto; box-shadow: 0 7px 22px #0705098c; }
+    .admin-page h3 { margin: 0 0 6px; font-size: 1.625rem; line-height: 1.15; letter-spacing: -.04em; }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; margin: 19px 0; }
+    .stats div { min-width: 0; padding: 13px; background: #1a1522; border: 1px solid var(--line); border-radius: 12px; }
+    .stats dt { color: var(--muted); font-size: .8125rem; }
+    .stats dd { margin: 2px 0 0; font-variant-numeric: tabular-nums; font-size: 1.875rem; font-weight: 650; }
+    #key-form { max-width: 350px; }
+    #generated { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; margin-top: 16px; max-width: 530px; }
+    #key-output, .key-value { font-family: ui-monospace, Consolas, monospace; font-size: .875rem; }
+    .table-scroll { overflow: auto; margin-top: 17px; max-height: 49dvh; }
+    table { border-collapse: collapse; width: 100%; text-align: left; font-size: .875rem; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    th { color: var(--muted); font-weight: 600; background: #15111b; position: sticky; top: 0; }
+    td:last-child { text-align: right; }
+    .key-value { color: #d8c4fc; }
+    .status-available { color: #c4b0ed; }
+    .status-redeemed { color: #b9d6c5; }
+    .status-expired { color: #e6a5b3; }
+    .copy-row { min-height: 33px; padding-inline: 10px; }
+    .row-actions { display: flex; justify-content: end; align-items: center; gap: 6px; }
+    .key-options { width: 34px; height: 33px; font-size: 1.125rem; }
+    .key-options[aria-expanded="true"] { border-color: var(--accent); }
+    .key-menu td { text-align: right; background: #1b1523; }
+    .key-menu .row-actions { flex-wrap: wrap; }
+    .key-menu .button { min-height: 35px; padding-inline: 9px; }
+    .danger { color: #ffb9c8; }
+    button[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+    .action-card { margin-top: 15px; padding: 13px; border: 1px solid #4b3a59; border-radius: 12px; background: #1b1523; }
+    .action-card h4 { margin: 0; }
+    .action-card p { color: var(--muted); margin: 5px 0; font-size: .875rem; overflow-wrap: anywhere; }
+    .action-card label { max-width: 165px; }
+    .action-card .row-actions { justify-content: start; }
+    dialog.expanded #notice:not(:empty) { margin: 0; padding: 11px 23px; border-top: 1px solid var(--line); }
+
+    @media (max-width: 680px) {
+      .frame { width: calc(100% - 36px); }
+      .topbar .frame { min-height: 61px; grid-template-columns: 1fr auto; }
+      .topbar .frame { column-gap: 8px; row-gap: 0; }
+      .topbar .brand, .topbar .tools { min-height: 58px; }
+      .topbar nav { grid-column: 1 / -1; grid-row: 2; justify-content: space-between; border-top: 1px solid var(--line); gap: 8px; }
+      .topbar nav a { height: 37px; }
+      .hero { min-height: 490px; padding-block: 68px; }
+      .hero h1 { font-size: clamp(2.75rem, 11vw, 4.75rem); }
+      .hero p { font-size: 1rem; margin-block: 20px 23px; }
+      .hero-actions .button { min-height: 44px; padding-inline: 13px; font-size: .875rem; }
+      .license-card { grid-template-columns: 1fr; gap: 13px; padding-block: 16px; }
+      .periods { grid-template-columns: repeat(2, 1fr); }
+      .periods li { padding-block: 9px; border-top: 1px solid var(--line); }
+      .periods li:nth-child(odd) { border-left: 0; }
+      dialog { padding: 21px; }
+      .admin-body { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+      .admin-sidebar { padding: 9px 12px; border: 0; border-bottom: 1px solid var(--line); gap: 7px; }
+      .tabs { display: flex; gap: 3px; flex-wrap: wrap; }
+      .tabs button { padding: 7px 8px; }
+      .admin-page { padding: 16px; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
+      .stats div { padding: 9px 6px; }
+      #generated { grid-template-columns: 1fr; }
+      .dashboard { padding-top: 15px; }
+      .dashboard .frame { width: calc(100% - 26px); }
+      .dashboard-layout { grid-template-columns: 1fr; gap: 11px; margin-top: 12px; }
+      .dashboard-nav { display: flex; flex-wrap: wrap; }
+      .dashboard-metrics { grid-template-columns: 1fr; gap: 6px; }
+      .key-filter .picker-list { position: static; box-shadow: none; }
+      .feature-list { grid-template-columns: 1fr; }
+      table thead { position: absolute; clip-path: inset(50%); }
+      table tbody { display: grid; gap: 7px; }
+      table tbody tr:not(.key-menu) { display: grid; grid-template-columns: auto 1fr auto; align-items: center; padding: 8px; column-gap: 8px; border: 1px solid var(--line); border-radius: 6px; }
+      table tbody td { padding: 3px 0; border-bottom: 0; }
+      table tbody tr:not(.key-menu) td:first-child { grid-column: 1 / -1; }
+      table tbody .key-menu, table tbody .key-menu td { display: block; }
+      table tbody .key-menu td { padding: 6px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body id="start">
+  <div id="landing-shell">
+  <header class="topbar">
+    <div class="frame">
+      <a class="brand" href="#start" aria-label="Nova home"><span class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>NOVA</a>
+      <nav aria-label="Main navigation"><a href="#start" aria-current="location">Home</a><a href="#features">Features</a><a href="#licenses">Licenses</a><a href="#faq">FAQ</a></nav>
+      <div class="tools">
+        <button id="sound" class="icon-button" type="button" aria-label="Interface sounds" aria-pressed="true" title="Interface sounds">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3z"/><path class="sound-on" d="M16 8a5 5 0 0 1 0 8m3-11a9 9 0 0 1 0 14"/><path class="sound-off" d="m16 10 5 5m0-5-5 5"/></svg>
+        </button>
+        <button class="button" type="button" data-open="login" id="header-account">Sign in</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="headline">
+      <div class="frame">
+        <h1 id="headline">Activate your <span>Nova access.</span></h1>
+        <p>Use your license key to create an account and open your dashboard.</p>
+        <div class="hero-actions">
+          <button class="button primary" type="button" data-open="register">Open dashboard</button>
+          <a class="button secondary" href="#licenses">View licenses</a>
+        </div>
+      </div>
+    </section>
+    <section class="licenses frame" id="licenses" aria-labelledby="license-title">
+      <div class="license-card">
+        <header class="license-head">
+          <h2 id="license-title">License duration</h2>
+          <p>Starts when you register</p>
+        </header>
+        <ul class="periods">
+          <li>1 day</li><li>7 days</li><li>30 days</li><li>Lifetime</li>
+        </ul>
+      </div>
+    </section>
+    <section class="info-section frame" id="features" aria-labelledby="features-title">
+      <h2 id="features-title">Features</h2>
+      <div class="feature-list">
+        <article><h3>License activation</h3><p>Use your key when you create an account to activate access.</p></article>
+        <article><h3>Player dashboard</h3><p>See your license status, expiry date and time remaining.</p></article>
+        <article><h3>Timed or lifetime access</h3><p>Keys are available for 1, 7 or 30 days, or for lifetime access.</p></article>
+      </div>
+    </section>
+    <section class="info-section frame" id="faq" aria-labelledby="faq-title">
+      <h2 id="faq-title">FAQ</h2>
+      <div class="faq-list">
+        <details open><summary>Where do I get a license key?</summary><p>Ask the Nova administrator for a key. Activate it on this website, then sign in to Nova Desktop with your username and password.</p></details>
+        <details><summary>When does my license start?</summary><p>Your access starts as soon as you register with your key.</p></details>
+        <details><summary>Coming soon</summary><p>More features are planned for the player dashboard.</p></details>
+      </div>
+    </section>
+  </main>
+  <footer><div class="frame"><strong>NOVA</strong><a href="#start">Back to top</a></div></footer>
+  </div>
+
+  <main class="dashboard" id="player-shell" hidden>
+    <div class="frame">
+      <header class="dashboard-header">
+        <div class="dashboard-brand"><span class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>NOVA <span>Dashboard</span></div>
+        <button class="button" type="button" id="logout">Sign out</button>
+      </header>
+      <div class="dashboard-layout">
+        <aside class="dashboard-side">
+          <div class="player-profile">
+            <span class="player-avatar" id="player-avatar" aria-hidden="true"></span>
+            <div><strong id="account-name"></strong><p id="account-since"></p></div>
+          </div>
+          <nav class="dashboard-nav" aria-label="Dashboard">
+            <button type="button" data-player="overview" aria-current="page">Overview</button>
+            <button type="button" data-player="settings">Settings</button>
+            <button type="button" data-player="downloads">Downloads</button>
+            <button type="button" data-soon="Configuration">Config</button>
+            <hr>
+            <button type="button" data-soon="Link Discord">Link Discord</button>
+            <button type="button" data-soon="Game setup">Game setup</button>
+            <button type="button" data-soon="Purchase">Purchase</button>
+          </nav>
+        </aside>
+        <section class="dashboard-content" aria-label="Dashboard content">
+          <p id="player-notice" role="status"></p>
+          <section class="dashboard-page" data-player-page="overview">
+            <h1 tabindex="-1">Overview</h1>
+            <p class="dashboard-lead">Account and license details</p>
+            <p class="dashboard-note" id="renew-note" hidden>Your license has expired. <button type="button" class="text-button" data-redeem>Redeem a key</button></p>
+            <dl class="dashboard-metrics">
+              <div><dt>License status</dt><dd id="license-status"></dd></div>
+              <div><dt>Time remaining</dt><dd id="license-remaining"></dd></div>
+              <div><dt>Expires</dt><dd id="license-expiry"></dd></div>
+            </dl>
+            <progress id="license-progress" max="100" aria-label="Percentage of license time left" hidden></progress>
+            <section class="dashboard-card">
+              <h2>Your license</h2>
+              <p id="license-plan"></p>
+              <div class="license-line">
+                <code id="player-license-code"></code>
+                <button class="button" type="button" id="copy-player-key" hidden>Copy key</button>
+              </div>
+            </section>
+            <section class="dashboard-card">
+              <h2>Recent license activity</h2>
+              <div class="player-history"><ol id="license-history"></ol><p id="history-empty" hidden>No license activity recorded yet.</p></div>
+            </section>
+          </section>
+          <section class="dashboard-page" data-player-page="settings" hidden>
+            <h1 tabindex="-1">Settings</h1>
+            <p class="dashboard-lead">Manage your profile and access.</p>
+            <section class="dashboard-card">
+              <h2>Profile picture</h2>
+              <form id="avatar-form">
+                <label>Choose an image<input type="file" name="avatar" accept="image/png,image/jpeg,image/webp,image/gif" required></label>
+                <button class="button" type="submit">Save picture</button>
+              </form>
+            </section>
+            <section class="dashboard-card">
+              <h2>Change password</h2>
+              <form id="password-form">
+                <label>Current password<input type="password" name="currentPassword" autocomplete="current-password" maxlength="256" required></label>
+                <label>New password<input type="password" name="newPassword" autocomplete="new-password" minlength="8" maxlength="256" required></label>
+                <button class="button" type="submit">Change password</button>
+              </form>
+            </section>
+            <section class="dashboard-card">
+              <h2>Redeem key</h2>
+              <p>Extend your existing access or reactivate an expired license.</p>
+              <form id="redeem-form">
+                <label>License key<input name="license" placeholder="NOVA-XXXXXX-XXXXXX-XXXXXX" spellcheck="false" autocomplete="off" required></label>
+                <button class="button primary" type="submit">Redeem key</button>
+              </form>
+            </section>
+            <section class="dashboard-card">
+              <h2>More settings</h2>
+              <div class="license-line">
+                <button class="text-button" type="button" data-soon="Device settings">Device settings</button>
+                <button class="text-button" type="button" data-soon="Two-factor authentication">Two-factor authentication</button>
+                <button class="text-button" type="button" data-soon="Subscription management">Subscription management</button>
+              </div>
+            </section>
+          </section>
+          <section class="dashboard-page" data-player-page="downloads" hidden>
+            <h1 tabindex="-1">Downloads</h1>
+            <p class="dashboard-lead">Files available with your Nova license.</p>
+            <div class="dashboard-card">
+              <p id="download-empty"></p>
+              <button class="button" type="button" id="download-renew" data-redeem hidden>Redeem a key</button>
+              <ul class="download-list" id="player-downloads"></ul>
+            </div>
+          </section>
+          <section class="dashboard-page" data-player-page="soon" hidden>
+            <h1 tabindex="-1" id="soon-title"></h1>
+            <p class="dashboard-lead">Coming soon.</p>
+          </section>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <dialog id="panel" aria-labelledby="register-title">
+    <div class="dialog-brand"><span class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>NOVA</div>
+    <button id="close" class="icon-button" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+
+    <section class="pane" data-pane="register">
+      <h2 id="register-title" tabindex="-1">Create account</h2>
+      <p>Enter your license key to activate access.</p>
+      <form id="register-form">
+        <label>Username<input name="name" autocomplete="username" minlength="2" maxlength="48" required></label>
+        <label>Password<input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="256" placeholder="At least 8 characters" required></label>
+        <label>Confirm password<input name="confirm" type="password" autocomplete="new-password" maxlength="256" required></label>
+        <label>License key<input name="license" autocomplete="off" spellcheck="false" placeholder="NOVA-XXXXXX-XXXXXX-XXXXXX" required></label>
+        <button class="button primary">Create account</button>
+      </form>
+      <div class="pane-footer">
+        <button class="text-button" type="button" data-show="login">I already have an account</button>
+      </div>
+    </section>
+
+    <section class="pane" data-pane="login" hidden>
+      <h2 id="login-title" tabindex="-1">Sign in</h2>
+      <p>Sign in with the username and password you chose when you activated your license.</p>
+      <form id="login-form">
+        <label>Username<input name="name" autocomplete="username" maxlength="48" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" maxlength="256" required></label>
+        <button class="button primary">Sign in</button>
+      </form>
+      <div class="pane-footer">
+        <button class="text-button" type="button" data-show="register">Create account</button>
+      </div>
+    </section>
+
+    <section class="pane" data-pane="admin" hidden>
+      <h2 id="admin-title" tabindex="-1">Admin access</h2>
+      <p>Sign in with your Nova license administrator account.</p>
+      <form id="admin-signin">
+        <label>Nova username or account email<input name="username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="254" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="button primary">Unlock admin panel</button>
+      </form>
+      <div class="pane-footer"><button class="text-button" type="button" data-back>Back to form</button></div>
+    </section>
+
+    <section data-pane="management" hidden>
+      <header class="admin-head">
+        <span class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+        <h2 id="management-title" tabindex="-1">Nova Admin</h2>
+      </header>
+      <div class="admin-body">
+        <aside class="admin-sidebar">
+          <div class="tabs" role="tablist" aria-label="Admin pages">
+            <button id="tab-overview" type="button" role="tab" aria-selected="true" aria-controls="admin-overview" data-tab="overview">Overview</button>
+            <button id="tab-create" type="button" role="tab" aria-selected="false" aria-controls="admin-create" tabindex="-1" data-tab="create">Create key</button>
+            <button id="tab-keys" type="button" role="tab" aria-selected="false" aria-controls="admin-keys" tabindex="-1" data-tab="keys">License keys</button>
+            <button id="tab-files" type="button" role="tab" aria-selected="false" aria-controls="admin-files" tabindex="-1" data-tab="files">Downloads</button>
+          </div>
+          <button class="text-button" type="button" data-back>Back to form</button>
+        </aside>
+        <div>
+          <section class="admin-page" id="admin-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0" data-page="overview">
+            <h3>Overview</h3>
+            <dl class="stats">
+              <div><dt>Total keys</dt><dd id="total-keys">0</dd></div>
+              <div><dt>Available</dt><dd id="available-keys">0</dd></div>
+              <div><dt>Redeemed</dt><dd id="redeemed-keys">0</dd></div>
+              <div><dt>Expired</dt><dd id="expired-keys">0</dd></div>
+            </dl>
+            <button class="button primary" type="button" id="overview-create">Create a key</button>
+            <button class="button" type="button" id="import-keys">Import existing browser keys</button>
+          </section>
+          <section class="admin-page" id="admin-create" role="tabpanel" aria-labelledby="tab-create" tabindex="0" data-page="create" hidden>
+            <h3>Create a license key</h3>
+            <p class="admin-description">Keys are assigned to one account. Sign in with your license administrator account to issue keys.</p>
+            <form id="key-form">
+              <div class="picker" id="duration-picker">
+                <span class="picker-caption" id="duration-caption">Duration</span>
+                <input type="hidden" name="period" value="1d">
+                <button class="button picker-trigger" type="button" aria-expanded="false" aria-controls="duration-options" aria-labelledby="duration-caption duration-choice"><span id="duration-choice">1 day</span></button>
+                <div class="picker-list" id="duration-options" role="group" aria-labelledby="duration-caption" hidden>
+                  <button type="button" data-value="1d" aria-pressed="true">1 day</button>
+                  <button type="button" data-value="7d" aria-pressed="false">7 days</button>
+                  <button type="button" data-value="30d" aria-pressed="false">30 days</button>
+                  <button type="button" data-value="lifetime" aria-pressed="false">Lifetime</button>
+                  <button type="button" data-value="custom" aria-pressed="false">Custom</button>
+                </div>
+              </div>
+              <label id="custom-duration" hidden>Number of days
+                <input name="customDays" type="number" min="1" max="3650" step="1" placeholder="e.g. 14" aria-describedby="custom-duration-hint" disabled>
+                <span class="picker-hint" id="custom-duration-hint">Choose between 1 and 3650 days.</span>
+              </label>
+              <button class="button primary">Generate key</button>
+            </form>
+            <div id="generated" hidden>
+              <label>License key<input id="key-output" readonly></label>
+              <button class="button" type="button" id="copy-key">Copy key</button>
+            </div>
+          </section>
+          <section class="admin-page" id="admin-keys" role="tabpanel" aria-labelledby="tab-keys" tabindex="0" data-page="keys" hidden>
+            <div class="list-header">
+              <h3>License keys</h3>
+              <div class="picker key-filter" id="status-picker">
+                <span class="picker-caption" id="status-caption">Status</span>
+                <input type="hidden" value="all">
+                <button class="button picker-trigger" type="button" id="key-filter" aria-expanded="false" aria-controls="status-options" aria-labelledby="status-caption status-choice"><span id="status-choice">All keys</span></button>
+                <div class="picker-list" id="status-options" role="group" aria-labelledby="status-caption" hidden>
+                  <button type="button" data-value="all" aria-pressed="true">All keys</button>
+                  <button type="button" data-value="available" aria-pressed="false">Available</button>
+                  <button type="button" data-value="redeemed" aria-pressed="false">Redeemed</button>
+                  <button type="button" data-value="expired" aria-pressed="false">Expired</button>
+                </div>
+              </div>
+            </div>
+            <form class="action-card" id="key-action-form" aria-labelledby="key-action-title" hidden>
+              <div><h4 id="key-action-title" tabindex="-1"></h4><p id="key-action-description"></p></div>
+              <label id="key-action-days">Days to add<input name="days" type="number" min="1" max="3650" step="1" value="1"></label>
+              <div class="row-actions">
+                <button class="button primary" id="key-action-confirm"></button>
+                <button class="button" id="key-action-cancel" type="button">Cancel</button>
+              </div>
+            </form>
+            <p class="admin-description" id="empty-keys">No keys have been created yet.</p>
+            <div class="table-scroll" id="key-list" role="region" aria-label="License key list" tabindex="0" hidden>
+              <table aria-label="License keys">
+                <thead><tr><th scope="col">Key</th><th scope="col">Duration</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead>
+                <tbody id="key-rows"></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="admin-page" id="admin-files" role="tabpanel" aria-labelledby="tab-files" tabindex="0" data-page="files" hidden>
+            <h3>Downloads</h3>
+            <p class="admin-description">Upload a file, export the updated index.html and replace it on GitHub Pages to publish the file for everyone.</p>
+            <form id="upload-form">
+              <label>File to publish<input name="download" type="file" required></label>
+              <button class="button primary" type="submit">Add file</button>
+            </form>
+            <ul class="download-list" id="admin-downloads"></ul>
+            <button class="button" type="button" id="export-page">Export updated index.html</button>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <p id="notice" role="status" aria-live="polite"></p>
+  </dialog>
+  <script id="published-downloads" type="application/json">[{"id":"nova-windows","name":"Nova.exe","kind":"windows-release"}]</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
+  <script>
+    "use strict";
+
+    const $ = selector => document.querySelector(selector);
+    const panel = $("#panel");
+    const notice = $("#notice");
+    const headerAccount = $("#header-account");
+    const playerShell = $("#player-shell");
+    const publicationSource = document.documentElement.cloneNode(true);
+    const databaseKey = "nova.static.v1";
+    const projectUrl = "https://wpthchpiutaavbydszld.supabase.co";
+    const publicKey = "sb_publishable_Yx1c8j9fz-wp1PdlIfWLbQ_DScLzwtV";
+    const cloud = window.supabase?.createClient(projectUrl, publicKey,
+      { auth: { storage: window.sessionStorage, storageKey: "nova.supabase.session", detectSessionInUrl: false } }
+    );
+    const auth = cloud?.auth;
+    let adminClient;
+
+    function closeAdminSession() {
+      const client = adminClient;
+      adminClient = undefined;
+      adminUnlocked = false;
+      if (client) client.auth.signOut({scope: "local"}).catch(() => {});
+    }
+
+    async function adminRpc(name, params) {
+      if (!adminUnlocked || !adminClient) throw new Error("Sign in to the admin panel again.");
+      const { error } = await adminClient.rpc(name, params);
+      if (error) throw error;
+    }
+    const soundKey = "nova.sound";
+    const durations = { "1d": 1, "7d": 7, "30d": 30, lifetime: null };
+    const day = 86400000;
+    const durationLabels = { '1d': '1 day', '7d': '7 days', '30d': '30 days', lifetime: 'Lifetime' };
+    const dateFormat = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" });
+
+    let currentPane;
+    let returnPane = "register";
+    let adminUnlocked = false;
+    let expiryTimer;
+    let revision = 0;
+    let currentKey = "";
+    let activePicker;
+    let playerPage = "overview";
+    let activeAccountId;
+    let authFormBusy = false;
+
+    function baseDuration(license) {
+      return license.period === "custom" ? license.baseDays : durations[license.period];
+    }
+
+    function daysLabel(days) {
+      return days + (days === 1 ? " day" : " days");
+    }
+
+    function validDays(days) {
+      return Number.isInteger(days) && days >= 1 && days <= 3650;
+    }
+
+    function createPicker(id, onChange) {
+      const root = $(id);
+      const trigger = root.querySelector(".picker-trigger");
+      const value = root.querySelector('input[type="hidden"]');
+      const label = trigger.querySelector("span");
+      const list = root.querySelector(".picker-list");
+      const choices = [...list.querySelectorAll("button")];
+      const api = { get value() { return value.value; }, select, close };
+
+      function select(nextValue, notify = true) {
+        const choice = choices.find(item => item.dataset.value === nextValue);
+        if (!choice) return;
+        value.value = nextValue;
+        label.textContent = choice.textContent;
+        choices.forEach(item => item.setAttribute("aria-pressed", String(item === choice)));
+        if (notify) onChange(nextValue);
+      }
+
+      function close(restoreFocus = false) {
+        list.hidden = true;
+        trigger.setAttribute("aria-expanded", "false");
+        if (activePicker === api) activePicker = undefined;
+        if (restoreFocus) trigger.focus();
+      }
+
+      function open() {
+        activePicker?.close();
+        activePicker = api;
+        list.hidden = false;
+        trigger.setAttribute("aria-expanded", "true");
+        choices.find(item => item.dataset.value === value.value)?.focus();
+      }
+
+      trigger.addEventListener("click", () => list.hidden ? open() : close(true));
+      choices.forEach(choice => choice.addEventListener("click", () => {
+        close(true);
+        select(choice.dataset.value);
+      }));
+      root.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !list.hidden) {
+          event.preventDefault();
+          event.stopPropagation();
+          close(true);
+          return;
+        }
+        if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        if (list.hidden) {
+          open();
+          return;
+        }
+        const current = choices.indexOf(document.activeElement);
+        let index = event.key === "ArrowDown" ? current + 1 : current - 1;
+        if (event.key === "Home") index = 0;
+        if (event.key === "End") index = choices.length - 1;
+        choices[(index + choices.length) % choices.length].focus();
+      });
+      root.addEventListener("focusout", event => {
+        if (!root.contains(event.relatedTarget)) close();
+      });
+      document.addEventListener("pointerdown", event => {
+        if (activePicker === api && !root.contains(event.target)) close();
+      });
+      return api;
+    }
+
+    createPicker("#duration-picker", period => {
+      const custom = period === "custom";
+      const field = $("#key-form").elements.customDays;
+      $("#custom-duration").hidden = !custom;
+      field.disabled = !custom;
+      field.required = custom;
+      if (custom) field.focus();
+    });
+    const statusPicker = createPicker("#status-picker", () => {
+      closeKeyAction();
+      refreshAdmin();
+    });
+
+    function readDatabase() {
+      return JSON.parse(localStorage.getItem(databaseKey)) || { users: [], licenses: [] };
+    }
+
+    function updateDatabase(change) {
+      const commit = async () => {
+        const database = readDatabase();
+        const result = await change(database);
+        localStorage.setItem(databaseKey, JSON.stringify(database));
+        return result;
+      };
+      return navigator.locks ? navigator.locks.request(databaseKey, commit) : commit();
+    }
+
+    function normalizeName(name) {
+      return name.trim().normalize("NFC").toLocaleLowerCase("pl");
+    }
+
+    function randomHex(length) {
+      return Array.from(crypto.getRandomValues(new Uint8Array(length)), byte => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    function hex(buffer) {
+      return Array.from(new Uint8Array(buffer), byte => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    async function authEmail(username) {
+      // Supabase password auth uses an email identifier. Nova accounts use an internal address.
+      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(username));
+      return hex(digest) + "@nova.invalid";
+    }
+
+    async function passwordHash(password, salt) {
+      const encoder = new TextEncoder();
+      const key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
+      const bits = await crypto.subtle.deriveBits({
+        name: "PBKDF2", salt: encoder.encode(salt), iterations: 310000, hash: "SHA-256"
+      }, key, 256);
+      return hex(bits);
+    }
+
+    function requireAuth() {
+      if (!auth) throw new Error("Could not load the sign-in service. Reload the page and try again.");
+      return auth;
+    }
+
+    async function licenseRpc(name, params = {}) {
+      requireAuth();
+      const { data, error } = await cloud.rpc(name, params);
+      if (error) throw new Error(error.code === "PGRST202"
+        ? "The license service needs to be enabled in Supabase." : error.message);
+      return data;
+    }
+
+    async function createAuthAccount(email, password, username, license) {
+      const { data, error } = await requireAuth().signUp({
+        email, password, options: { data: { username, ...(license && { nova_key: license }) } }
+      });
+      if (error) throw error;
+      if (!data.session) throw new Error("Account setup is incomplete. Contact the Nova administrator.");
+      return data.user;
+    }
+
+    function mergeKeys(database, account, keys) {
+      migrateGrants(account, database.licenses);
+      // Preserve historical expiry for an administrator importing an older browser.
+      for (const grant of account.grants) {
+        const key = database.licenses.find(item => item.code === grant.code && item.usedBy === account.id);
+        if (key && !("legacyEnd" in key)) key.legacyEnd = grant.end;
+      }
+      account.grants = [];
+      for (const row of keys) {
+        let key = database.licenses.find(item => item.code === row.code);
+        if (!key) {
+          key = { code: row.code, period: row.days === null ? "lifetime" : "custom", baseDays: row.days };
+          database.licenses.push(key);
+        }
+        key.used = true;
+        key.usedBy = account.id;
+        if (row.disabled) key.expiredAt ??= Date.now();
+        else delete key.expiredAt;
+        const grant = { code: row.code, start: Date.parse(row.activated_at), end: row.expires_at === null ? null : Date.parse(row.expires_at), revoked: row.disabled };
+        const existing = account.grants.find(item => item.code === row.code);
+        if (existing) Object.assign(existing, grant);
+        else account.grants.push(grant);
+      }
+      const valid = account.grants.filter(grant => !grant.revoked);
+      account.expires = valid.some(grant => grant.end === null) ? null : Math.max(0, ...valid.map(grant => grant.end));
+    }
+
+    async function saveAuthAccount(authUser, legacyAccount) {
+      const keys = await licenseRpc("nova_my_keys");
+      return updateDatabase(database => {
+        let account = database.users.find(user => user.authId === authUser.id);
+        if (account) {
+          mergeKeys(database, account, keys);
+          return account;
+        }
+        if (legacyAccount) {
+          account = database.users.find(user => user.id === legacyAccount.id && user.hash === legacyAccount.hash);
+        }
+        if (account) {
+          account.authId = authUser.id;
+          delete account.hash;
+          delete account.salt;
+        } else {
+          const username = authUser.user_metadata?.username;
+          if (typeof username !== "string" || !username.trim()) throw new Error("This account has no Nova username.");
+          account = {
+            id: authUser.id, authId: authUser.id, name: username,
+            expires: 0, createdAt: Date.parse(authUser.created_at), grants: []
+          };
+          database.users.push(account);
+        }
+        mergeKeys(database, account, keys);
+        return account;
+      });
+    }
+
+    function showNotice(message = "", isError = false) {
+      notice.textContent = message;
+      notice.dataset.error = String(isError);
+    }
+
+    function setPane(name, message, isError) {
+      activePicker?.close();
+      currentPane = name;
+      revision++;
+      document.querySelectorAll("[data-pane]").forEach(pane => {
+        pane.hidden = pane.dataset.pane !== name;
+      });
+      panel.classList.toggle("expanded", name === "management");
+      const heading = $("#" + name + "-title");
+      panel.setAttribute("aria-labelledby", heading.id);
+      showNotice(message, isError);
+      if (!panel.open) panel.showModal();
+      heading.focus();
+    }
+
+    function sessionUser() {
+      if (!activeAccountId) return;
+      const { users, licenses } = readDatabase();
+      const user = users.find(account => account.authId === activeAccountId);
+      if (user) migrateGrants(user, licenses);
+      return user;
+    }
+
+    function hasAccess(user) {
+      return Boolean(user && (user.expires === null || user.expires > Date.now()));
+    }
+
+    function refreshSession() {
+      clearTimeout(expiryTimer);
+      const user = sessionUser();
+      headerAccount.textContent = user ? "My account" : "Sign in";
+      if (!user && !playerShell.hidden) setDashboardVisible(false);
+      if (user && !playerShell.hidden) renderPlayer(user);
+      if (hasAccess(user) && user.expires !== null) {
+        expiryTimer = setTimeout(refreshSession, Math.min(60000, Math.max(1, user.expires - Date.now())));
+      }
+      return user;
+    }
+
+    function timeRemaining(expires) {
+      if (expires === null) return "Unlimited";
+      if (expires <= Date.now()) return "0 days";
+      const minutes = Math.max(1, Math.ceil((expires - Date.now()) / 60000));
+      const parts = [Math.floor(minutes / 1440), Math.floor(minutes / 60) % 24, minutes % 60];
+      const labels = ["day", "hour", "minute"];
+      return parts.map((amount, index) => amount ? amount + " " + labels[index] + (amount === 1 ? "" : "s") : "")
+        .filter(Boolean).join(", ");
+    }
+
+    function renderPlayer(user) {
+      $("#account-name").textContent = user.name;
+      const avatar = $("#player-avatar");
+      if (avatar.dataset.image !== (user.avatar || "")) {
+        avatar.dataset.image = user.avatar || "";
+        if (user.avatar) {
+          const image = document.createElement("img");
+          image.src = user.avatar;
+          image.alt = "";
+          avatar.replaceChildren(image);
+        } else avatar.textContent = Array.from(user.name)[0].toUpperCase();
+      }
+      const since = $("#account-since");
+      since.hidden = !Number.isFinite(user.createdAt);
+      since.textContent = since.hidden ? "" : "Member since " + dateFormat.format(user.createdAt);
+      const active = hasAccess(user);
+      $("#renew-note").hidden = active;
+      const status = $("#license-status");
+      status.dataset.expired = String(!active);
+      status.textContent = active ? (user.expires === null ? "Active · Lifetime" : "Active") : user.grants.length ? "Expired" : "No license";
+      $("#license-expiry").textContent = user.expires === null ? "Never" : user.expires ? dateFormat.format(user.expires) : "—";
+      $("#license-remaining").textContent = timeRemaining(user.expires);
+      const grants = user.grants.filter(grant => !grant.revoked && grant.code);
+      const current = grants.findLast(grant => grant.end === null || grant.end > Date.now()) || grants.at(-1);
+      $("#player-license-code").textContent = current?.code || "No key on record";
+      $("#copy-player-key").hidden = !current;
+      $("#license-plan").textContent = current?.end === null ? "Lifetime access" : current ? "Most recently applied key" : "";
+      const progress = $("#license-progress");
+      const activeGrant = user.grants.find(grant => !grant.revoked && grant.start <= Date.now() && (grant.end === null || grant.end > Date.now()));
+      progress.hidden = !activeGrant || user.expires === null;
+      if (!progress.hidden) progress.value = Math.max(0, Math.min(100, (user.expires - Date.now()) / (user.expires - activeGrant.start) * 100));
+      renderLicenseHistory(user);
+      if (playerPage === "downloads") refreshDownloads();
+    }
+
+    function renderLicenseHistory(user) {
+      const activity = [...(user.activity || [])];
+      if (Number.isFinite(user.createdAt)) activity.unshift({ type: "activation", at: user.createdAt });
+      const entries = activity.slice(-5).reverse().map(event => {
+        const row = document.createElement("li");
+        const title = document.createElement("span");
+        const date = document.createElement("time");
+        if (event.type === "extension") title.textContent = daysLabel(event.days) + " added";
+        else if (event.type === "expiration") title.textContent = "License expired by administrator";
+        else if (event.type === "redemption") title.textContent = event.days === null ? "Lifetime key redeemed" : daysLabel(event.days) + " redeemed";
+        else if (event.type === "removal") title.textContent = "License key removed by administrator";
+        else title.textContent = "License activated";
+        date.dateTime = new Date(event.at).toISOString();
+        date.textContent = dateFormat.format(event.at);
+        row.append(title, date);
+        return row;
+      });
+      $("#license-history").replaceChildren(...entries);
+      $("#history-empty").hidden = entries.length > 0;
+    }
+
+    function setDashboardVisible(visible) {
+      $("#landing-shell").hidden = visible;
+      playerShell.hidden = !visible;
+    }
+
+    function showPlayerNotice(message = "", error = false) {
+      const area = $("#player-notice");
+      area.textContent = message;
+      area.dataset.error = String(error);
+    }
+
+    function showPlayerPage(page, soonButton) {
+      playerPage = page;
+      showPlayerNotice();
+      document.querySelectorAll("[data-player], [data-soon]").forEach(button => {
+        if (button.dataset.player === page || button === soonButton) button.setAttribute("aria-current", "page");
+        else button.removeAttribute("aria-current");
+      });
+      document.querySelectorAll("[data-player-page]").forEach(section => {
+        section.hidden = section.dataset.playerPage !== page;
+        if (!section.hidden) section.querySelector("h1").focus();
+      });
+      if (page === "downloads") refreshDownloads();
+    }
+
+    function showAccount() {
+      if (panel.open) panel.close();
+      const opening = playerShell.hidden;
+      setDashboardVisible(true);
+      if (opening) {
+        showPlayerPage("overview");
+        window.scrollTo(0, 0);
+      }
+      refreshSession();
+    }
+
+    function openAdmin(from) {
+      returnPane = from;
+      document.querySelectorAll("[data-back]").forEach(button => {
+        button.textContent = from === "account" ? "Back to dashboard" : "Back to form";
+      });
+      $("#admin-signin").reset();
+      setPane("admin");
+      $("#admin-signin").elements.username.focus();
+    }
+
+    function leaveAdmin() {
+      closeAdminSession();
+      closeKeyMenu();
+      closeKeyAction();
+      if (returnPane === "account") {
+        if (sessionUser()) showAccount();
+        else setPane("login");
+        return;
+      }
+      setPane(returnPane);
+      if (returnPane === "register" && currentKey) $("#register-form").elements.license.value = currentKey;
+      currentKey = "";
+    }
+
+    const adminTabs = [...document.querySelectorAll("[data-tab]")];
+    const adminPages = [...document.querySelectorAll("[data-page]")];
+    const statusLabels = { available: "Available", redeemed: "Redeemed", expired: "Expired" };
+    const actionLabels = { extend: "Add time", expire: "Expire key", remove: "Remove key" };
+    let adminTab = "overview";
+    let openKeyMenu;
+    let keyAction;
+
+    function migrateGrants(user, licenses) {
+      if (user.grants) return;
+      const key = licenses.find(license => license.usedBy === user.id);
+      const start = Math.min(user.createdAt ?? Date.now(), user.expires ?? Infinity);
+      user.grants = [{ code: key?.code ?? null, start, end: user.expires }];
+    }
+
+    function appendGrant(user, code, days, now) {
+      const start = Math.max(now, user.expires ?? now);
+      const end = days === null ? null : start + days * day;
+      user.grants.push({ code, start, end });
+      user.expires = end;
+    }
+
+    function redeemLicense(database, user, input, now) {
+      const code = input.trim().toUpperCase();
+      const key = database.licenses.find(license => license.code === code);
+      if (!key || key.used) throw new Error("This license key is invalid or has already been redeemed.");
+      if (Number.isFinite(key.expiredAt)) throw new Error("This license key has expired.");
+      if (user.expires === null) throw new Error("Your account already has lifetime access.");
+      const base = baseDuration(key);
+      if (base !== null && !Number.isFinite(base)) throw new Error("This key does not have a valid duration.");
+      const days = base === null ? null : base + (key.extraDays || 0);
+      migrateGrants(user, database.licenses);
+      appendGrant(user, key.code, days, now);
+      key.used = true;
+      key.usedBy = user.id;
+      return days;
+    }
+
+    function revokeGrants(user, code, now) {
+      const wasExpired = user.expires !== null && user.expires <= now;
+      let cursor = now;
+      for (const grant of user.grants) {
+        if (grant.revoked) continue;
+        if (grant.code === code) {
+          grant.revoked = true;
+          continue;
+        }
+        if (grant.end !== null && grant.end <= now) continue;
+        if (grant.start > now) {
+          const length = grant.end === null ? null : grant.end - grant.start;
+          grant.start = cursor;
+          grant.end = length === null ? null : cursor + length;
+        }
+        cursor = grant.end;
+      }
+      if (!wasExpired) user.expires = cursor;
+    }
+
+    function licenseStatus(license, users, now) {
+      if (Number.isFinite(license.expiredAt)) return "expired";
+      if (!license.used) return "available";
+      const user = users.get(license.usedBy);
+      if (user?.grants) {
+        const grants = user.grants.filter(grant => grant.code === license.code);
+        return grants.some(grant => !grant.revoked && (grant.end === null || grant.end > now)) ? "redeemed" : "expired";
+      }
+      return user && user.expires !== null && user.expires <= now ? "expired" : "redeemed";
+    }
+
+    function closeKeyMenu(restoreFocus = false) {
+      if (!openKeyMenu) return;
+      const { row, button } = openKeyMenu;
+      row.hidden = true;
+      button.setAttribute("aria-expanded", "false");
+      if (restoreFocus) button.focus();
+      openKeyMenu = null;
+    }
+
+    function closeKeyAction(restoreFocus = false) {
+      if (restoreFocus) {
+        if (keyAction?.button.isConnected) keyAction.button.focus();
+        else $("#key-filter").focus();
+      }
+      keyAction = null;
+      $("#key-action-form").hidden = true;
+    }
+
+    function extensionBlock(license, user) {
+      if (license.used && !user) return "This older key has no linked account to extend.";
+      if (!Number.isFinite(baseDuration(license))) return "This key has no fixed duration to extend.";
+      if (user?.expires === null) return "This account already has lifetime access.";
+      return "";
+    }
+
+    function buildKeyMenu(license, user, status, button) {
+      const row = document.createElement("tr");
+      row.className = "key-menu";
+      row.hidden = true;
+      const cell = row.insertCell();
+      cell.colSpan = 4;
+      const actions = document.createElement("div");
+      actions.className = "row-actions";
+      for (const [type, label] of Object.entries(actionLabels)) {
+        const action = document.createElement("button");
+        action.type = "button";
+        action.className = "button" + (type === "remove" ? " danger" : "");
+        action.textContent = label;
+        const unavailable = type === "extend" ? extensionBlock(license, user)
+          : type === "expire" && status === "expired" ? "This key has already expired." : "";
+        if (unavailable) {
+          action.title = unavailable;
+          action.setAttribute("aria-disabled", "true");
+        }
+        action.addEventListener("click", () => {
+          if (unavailable) showNotice(unavailable, true);
+          else beginKeyAction(type, license, user, button);
+        });
+        actions.append(action);
+      }
+      cell.append(actions);
+      button.addEventListener("click", () => {
+        const wasOpen = openKeyMenu?.button === button;
+        closeKeyMenu();
+        if (wasOpen) return;
+        row.hidden = false;
+        button.setAttribute("aria-expanded", "true");
+        openKeyMenu = { row, button };
+      });
+      return row;
+    }
+
+    function beginKeyAction(type, license, user, button) {
+      closeKeyMenu();
+      showNotice();
+      keyAction = { type, code: license.code, button };
+      const form = $("#key-action-form");
+      const daysField = form.elements.days;
+      const extending = type === "extend";
+      $("#key-action-days").hidden = !extending;
+      daysField.disabled = !extending;
+      daysField.required = extending;
+      daysField.value = "1";
+      $("#key-action-title").textContent = actionLabels[type];
+      $("#key-action-confirm").textContent = actionLabels[type];
+      let description;
+      if (extending) {
+        description = user
+          ? "Add days to the linked account. If access expired, the added time starts now."
+          : "Increase the duration of this key. Access begins when the key is redeemed.";
+        if (!user && Number.isFinite(license.expiredAt)) description += " This will make the key available again.";
+      } else {
+        description = type === "remove" ? "Permanently delete this key." : "Deactivate this key immediately.";
+        if (user) description += " Access granted by this key will end.";
+        else if (license.used) description += " This older key has no linked account on record.";
+      }
+      $("#key-action-description").textContent = license.code + " — " + description;
+      form.hidden = false;
+      $("#key-action-title").focus();
+    }
+
+    function changeLicense(database, action, days) {
+      const index = database.licenses.findIndex(license => license.code === action.code);
+      if (index === -1) throw new Error("This key no longer exists.");
+      const license = database.licenses[index];
+      const user = database.users.find(account => account.id === license.usedBy);
+      const now = Date.now();
+      if (user) migrateGrants(user, database.licenses);
+      if (action.type === "extend") {
+        const blocked = extensionBlock(license, user);
+        if (blocked) throw new Error(blocked);
+        if (!validDays(days)) throw new Error("Enter between 1 and 3650 full days.");
+        if (user) {
+          appendGrant(user, license.code, days, now);
+          recordLicenseEvent(user, { type: "extension", at: now, days });
+        }
+        license.extraDays = (license.extraDays || 0) + days;
+        delete license.expiredAt;
+        return;
+      }
+      if (user) {
+        revokeGrants(user, license.code, now);
+        recordLicenseEvent(user, { type: action.type === "expire" ? "expiration" : "removal", at: now });
+      }
+      if (action.type === "remove") database.licenses.splice(index, 1);
+      else license.expiredAt = now;
+    }
+
+    function recordLicenseEvent(user, event) {
+      user.activity = [...(user.activity || []), event].slice(-5);
+    }
+
+    function renderAdminData() {
+      const { licenses, users } = readDatabase();
+      const accounts = new Map(users.map(user => [user.id, user]));
+      const now = Date.now();
+      const counts = { available: 0, redeemed: 0, expired: 0 };
+      for (const license of licenses) counts[licenseStatus(license, accounts, now)]++;
+      $("#total-keys").textContent = licenses.length;
+      for (const [status, count] of Object.entries(counts)) $("#" + status + "-keys").textContent = count;
+      if (adminTab !== "keys") return;
+
+      closeKeyMenu();
+      const filter = statusPicker.value;
+      const rows = [];
+      for (const license of [...licenses].reverse()) {
+        const status = licenseStatus(license, accounts, now);
+        if (filter !== "all" && filter !== status) continue;
+
+        const row = document.createElement("tr");
+        const codeCell = row.insertCell();
+        const code = document.createElement("code");
+        code.className = "key-value";
+        code.textContent = license.code;
+        codeCell.append(code);
+        const days = baseDuration(license);
+        row.insertCell().textContent = Number.isFinite(days)
+          ? daysLabel(days + (license.extraDays || 0))
+          : (durationLabels[license.period] ?? "Unknown");
+        const statusCell = row.insertCell();
+        statusCell.className = "status-" + status;
+        statusCell.textContent = statusLabels[status];
+        const copy = document.createElement("button");
+        copy.type = "button";
+        copy.className = "button copy-row";
+        copy.textContent = "Copy";
+        copy.setAttribute("aria-label", "Copy " + license.code);
+        copy.addEventListener("click", () => copyKey(license.code, code));
+        const options = document.createElement("button");
+        options.type = "button";
+        options.className = "icon-button key-options";
+        options.textContent = "⋯";
+        options.setAttribute("aria-label", "Actions for " + license.code);
+        options.setAttribute("aria-expanded", "false");
+        const actions = document.createElement("div");
+        actions.className = "row-actions";
+        actions.append(copy, options);
+        row.insertCell().append(actions);
+        rows.push(row, buildKeyMenu(license, accounts.get(license.usedBy), status, options));
+      }
+
+      $("#key-rows").replaceChildren(...rows);
+      $("#key-list").hidden = rows.length === 0;
+      const empty = $("#empty-keys");
+      empty.hidden = rows.length > 0;
+      empty.textContent = licenses.length ? "No keys match this status." : "No keys have been created yet.";
+    }
+
+    function refreshAdmin() {
+      if (!adminUnlocked || currentPane !== "management" || !panel.open) return;
+      if (adminTab === "files") renderAdminDownloads();
+      try { renderAdminData(); }
+      catch { showNotice("Your browser has blocked local storage for accounts and licenses.", true); }
+    }
+
+    function showAdminTab(name, moveFocus = false) {
+      if (!adminUnlocked) return;
+      activePicker?.close();
+      closeKeyMenu();
+      closeKeyAction();
+      adminTab = name;
+      showNotice();
+      for (const tab of adminTabs) {
+        const selected = tab.dataset.tab === name;
+        tab.setAttribute("aria-selected", String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+        if (selected && moveFocus) tab.focus();
+      }
+      for (const page of adminPages) page.hidden = page.dataset.page !== name;
+      refreshAdmin();
+    }
+
+    adminTabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => showAdminTab(tab.dataset.tab));
+      tab.addEventListener("keydown", event => {
+        let next;
+        switch (event.key) {
+          case "ArrowRight": case "ArrowDown": next = (index + 1) % adminTabs.length; break;
+          case "ArrowLeft": case "ArrowUp": next = (index - 1 + adminTabs.length) % adminTabs.length; break;
+          case "Home": next = 0; break;
+          case "End": next = adminTabs.length - 1; break;
+          default: return;
+        }
+        event.preventDefault();
+        showAdminTab(adminTabs[next].dataset.tab, true);
+      });
+    });
+    $("#overview-create").addEventListener("click", () => showAdminTab("create", true));
+    $("#import-keys").addEventListener("click", async event => {
+      if (!adminUnlocked) return;
+      const button = event.currentTarget;
+      button.disabled = true;
+      let synced = 0, pending = 0;
+      try {
+        const { licenses, users } = readDatabase();
+        for (const key of licenses) {
+          const owner = users.find(user => user.id === key.usedBy);
+          if (key.used && !owner?.authId) { pending++; continue; }
+          const days = baseDuration(key);
+          const grant = owner?.grants?.findLast(item => item.code === key.code);
+          const end = grant ? grant.end : "legacyEnd" in key ? key.legacyEnd : owner?.expires;
+          await adminRpc("nova_issue_key", {
+            p_code: key.code, p_days: days === null ? null : days + (key.extraDays || 0),
+            p_owner: owner?.authId || null,
+            p_expiry: Number.isFinite(end) ? new Date(end).toISOString() : null,
+            p_disabled: Number.isFinite(key.expiredAt)
+          });
+          synced++;
+        }
+        showNotice(synced + " keys synchronized." + (pending ? " " + pending + " require their owner to sign in on this browser first." : ""));
+      } catch (error) { showNotice(error.message, true); }
+      finally { button.disabled = false; }
+    });
+    $("#key-action-cancel").addEventListener("click", () => closeKeyAction(true));
+
+    async function copyKey(value, source) {
+      const ticket = revision;
+      try {
+        await navigator.clipboard.writeText(value);
+        if (ticket === revision && panel.open) showNotice("License key copied.");
+      } catch {
+        if (ticket !== revision || !panel.open || !source.getClientRects().length) return;
+        if (source instanceof HTMLInputElement) {
+          source.focus();
+          source.select();
+        } else {
+          const range = document.createRange();
+          range.selectNodeContents(source);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+        showNotice("Key selected. Use Ctrl+C or Command+C to copy.");
+      }
+    }
+
+    function handleForm(id, action, usesAuth = false) {
+      $(id).addEventListener("submit", async event => {
+        event.preventDefault();
+        if (usesAuth && authFormBusy) return;
+        if (usesAuth) authFormBusy = true;
+        const form = event.currentTarget;
+        const button = form.querySelector('button[type="submit"], button:not([type])');
+        const ticket = revision;
+        button.disabled = true;
+        showNotice();
+        try {
+          await action(Object.fromEntries(new FormData(form)), () => ticket === revision && panel.open);
+        } catch (error) {
+          if (ticket === revision && panel.open) showNotice(error.message, true);
+        } finally {
+          if (usesAuth) authFormBusy = false;
+          button.disabled = false;
+        }
+      });
+    }
+
+    handleForm("#admin-signin", async ({ username, password }, isCurrent) => {
+      requireAuth();
+      const client = window.supabase.createClient(projectUrl, publicKey, {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false, storageKey: "nova.admin.session" }
+      });
+      const identifier = username.trim();
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+      const usernameEmail = await authEmail(normalizeName(identifier));
+      const signIn = email => client.auth.signInWithPassword({email, password});
+      let result = await signIn(isEmail ? identifier : usernameEmail);
+      // Nova usernames can also look like email addresses.
+      if (isEmail && identifier.length <= 48 && result.error?.code === "invalid_credentials" && isCurrent()) {
+        result = await signIn(usernameEmail);
+      }
+      const { data, error } = result;
+      if (error?.code === "invalid_credentials") {
+        throw new Error("Check your account email or Nova username and password.");
+      }
+      if (error) throw error;
+      const role = data.user?.app_metadata?.nova_license_admin;
+      if (!isCurrent() || String(role) !== "true") {
+        await client.auth.signOut({scope: "local"});
+        if (isCurrent()) throw new Error("This account does not have license administrator access.");
+        return;
+      }
+      adminClient = client;
+      adminUnlocked = true;
+      $("#admin-signin").reset();
+      $("#generated").hidden = true;
+      statusPicker.select("all", false);
+      setPane("management");
+      showAdminTab("overview");
+    }, true);
+
+    handleForm("#key-form", async ({ period, customDays }, isCurrent) => {
+      if (!adminUnlocked || (period !== "custom" && !Object.hasOwn(durations, period))) {
+        throw new Error("Unlock the admin panel and select a valid duration.");
+      }
+      const customDuration = Number(customDays);
+      if (period === "custom" && !validDays(customDuration)) throw new Error("Enter between 1 and 3650 full days.");
+      const code = await updateDatabase(async database => {
+        let code;
+        do {
+          code = "NOVA-" + [randomHex(3), randomHex(3), randomHex(3)].join("-").toUpperCase();
+        } while (database.licenses.some(license => license.code === code));
+        const license = { code, period, used: false };
+        if (period === "custom") license.baseDays = customDuration;
+        await adminRpc("nova_issue_key", { p_code: code, p_days: baseDuration(license) });
+        database.licenses.push(license);
+        return code;
+      });
+      if (!isCurrent()) return;
+      currentKey = code;
+      $("#key-output").value = code;
+      $("#generated").hidden = false;
+      refreshAdmin();
+      if (adminTab === 'create') showNotice('License key created.');
+    });
+
+    handleForm("#key-action-form", async ({ days }, isCurrent) => {
+      if (!adminUnlocked || !keyAction) throw new Error("Select a key action first.");
+      const action = keyAction;
+      const changed = await updateDatabase(async database => {
+        if (!isCurrent() || keyAction !== action) return false;
+        changeLicense(database, action, Number(days));
+        await adminRpc("nova_change_key", {p_code: action.code, p_action: action.type, p_days: action.type === "extend" ? Number(days) : null});
+        return true;
+      });
+      if (!changed || !isCurrent() || keyAction !== action) return;
+      if (action.type !== "extend" && currentKey === action.code) currentKey = "";
+      closeKeyAction();
+      refreshSession();
+      refreshAdmin();
+      $("#key-filter").focus();
+      const messages = { extend: "Time added to the license.", expire: "License key expired.", remove: "License key removed." };
+      showNotice(messages[action.type]);
+    });
+
+    handleForm("#register-form", async ({ name, password, confirm, license }, isCurrent) => {
+      const username = name.trim().normalize("NFC");
+      const normalized = normalizeName(username);
+      if (username.length < 2) throw new Error("Your username must be at least two characters long.");
+      if (password !== confirm) throw new Error("Passwords do not match.");
+      const email = await authEmail(normalized);
+      if (!isCurrent()) return;
+      if (readDatabase().users.some(user => user.hash && user.id === normalized)) {
+        throw new Error("This username already has an account in this browser. Sign in to upgrade it.");
+      }
+      const code = license.trim().toUpperCase();
+      if (!/^NOVA-([A-F0-9]{6}-){2}[A-F0-9]{6}$/.test(code)) throw new Error("Enter a valid Nova key.");
+      const availability = await cloud.rpc("nova_key_available", {p_code: code});
+      if (availability.error && availability.error.code !== "PGRST202") throw availability.error;
+      if (availability.data === false) {
+        throw new Error("This key is unavailable. If it was issued in the old admin panel, ask the administrator to import it.");
+      }
+      const authUser = await createAuthAccount(email, password, username, code);
+      await saveAuthAccount(authUser);
+      const { error } = await requireAuth().signOut({ scope: "local" });
+      if (error) throw error;
+      if (!isCurrent()) return;
+      $("#register-form").reset();
+      $("#login-form").elements.name.value = username;
+      setPane("login", "Account created. You can now sign in.");
+      $("#login-form").elements.password.focus();
+    }, true);
+
+    handleForm("#login-form", async ({ name, password }, isCurrent) => {
+      const id = normalizeName(name);
+      const email = await authEmail(id);
+      const legacy = readDatabase().users.find(user => user.id === id && user.hash && user.salt);
+      const verifiedLegacy = legacy && legacy.hash === await passwordHash(password, legacy.salt) ? legacy : undefined;
+      if (!isCurrent()) return;
+      const { data, error } = await requireAuth().signInWithPassword({ email, password });
+      if (error && error.code !== "invalid_credentials") throw error;
+      if (error && !verifiedLegacy) {
+        throw new Error("Incorrect username or password. If you haven't registered, create an account with your license key first.");
+      }
+      const authUser = error ? await createAuthAccount(email, password, verifiedLegacy.name) : data.user;
+      const account = await saveAuthAccount(authUser, verifiedLegacy);
+      if (!isCurrent()) {
+        await requireAuth().signOut({ scope: "local" });
+        return;
+      }
+      activeAccountId = account.authId;
+      $("#login-form").reset();
+      showAccount();
+    }, true);
+
+    function handlePlayerForm(id, action) {
+      const form = $(id);
+      form.addEventListener("submit", async event => {
+        event.preventDefault();
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        showPlayerNotice();
+        try {
+          const user = sessionUser();
+          if (!user) throw new Error("Sign in to continue.");
+          const message = await action(Object.fromEntries(new FormData(form)), user);
+          if (activeAccountId !== user.authId) return;
+          form.reset();
+          refreshSession();
+          showPlayerNotice(message);
+        } catch (error) {
+          if (!playerShell.hidden) showPlayerNotice(error.message, true);
+        } finally {
+          button.disabled = false;
+        }
+      });
+    }
+
+    function updatePlayer(id, change) {
+      return updateDatabase(database => {
+        const account = database.users.find(user => user.id === id);
+        if (!account || !activeAccountId || account.authId !== activeAccountId) throw new Error("Sign in to continue.");
+        return change(database, account);
+      });
+    }
+
+    handlePlayerForm("#redeem-form", async ({ license }, user) => {
+      await licenseRpc("nova_redeem_key", {p_code: license.trim().toUpperCase()});
+      const keys = await licenseRpc("nova_my_keys");
+      await updatePlayer(user.id, (database, account) => mergeKeys(database, account, keys));
+      return "License synchronized.";
+    });
+
+    handlePlayerForm("#password-form", async ({ currentPassword, newPassword }) => {
+      const { error } = await requireAuth().updateUser({ password: newPassword, current_password: currentPassword });
+      if (error) throw error;
+      return "Password changed.";
+    });
+
+    handlePlayerForm("#avatar-form", async ({ avatar }, user) => {
+      if (!["image/png", "image/jpeg", "image/webp", "image/gif"].includes(avatar?.type)) {
+        throw new Error("Choose a PNG, JPEG, WebP or GIF image.");
+      }
+      let image;
+      try { image = await createImageBitmap(avatar); }
+      catch { throw new Error("The image could not be opened."); }
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 160;
+      try {
+        const side = Math.min(image.width, image.height);
+        canvas.getContext("2d").drawImage(image, (image.width - side) / 2, (image.height - side) / 2, side, side, 0, 0, 160, 160);
+        const thumbnail = canvas.toDataURL("image/webp", .82);
+        await updatePlayer(user.id, (_, account) => { account.avatar = thumbnail; });
+      } finally {
+        image.close();
+      }
+      return "Profile picture updated.";
+    });
+
+    document.querySelectorAll("[data-player]").forEach(button => {
+      button.addEventListener("click", () => showPlayerPage(button.dataset.player));
+    });
+    document.querySelectorAll("[data-soon]").forEach(button => {
+      button.addEventListener("click", () => {
+        $("#soon-title").textContent = button.dataset.soon;
+        showPlayerPage("soon", button);
+      });
+    });
+    document.querySelectorAll("[data-redeem]").forEach(button => {
+      button.addEventListener("click", () => {
+        showPlayerPage("settings");
+        $("#redeem-form").elements.license.focus();
+      });
+    });
+    $("#copy-player-key").addEventListener("click", async () => {
+      const code = $("#player-license-code");
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        showPlayerNotice("License key copied.");
+      } catch {
+        const range = document.createRange();
+        range.selectNodeContents(code);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        showPlayerNotice("Key selected. Press Ctrl+C or Command+C to copy it.");
+      }
+    });
+
+    const publishedFiles = JSON.parse($("#published-downloads").textContent);
+    let fileDatabase;
+    let downloadRevision = 0;
+
+    function openFileDatabase() {
+      fileDatabase ||= new Promise((resolve, reject) => {
+        if (!window.indexedDB) {
+          reject(new Error("This browser has disabled file storage."));
+          return;
+        }
+        const request = indexedDB.open("nova.downloads.v1", 1);
+        request.onupgradeneeded = () => request.result.createObjectStore("files", { keyPath: "id" });
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(new Error("This browser could not open file storage."));
+        request.onblocked = () => reject(new Error("Close other Nova tabs and try again."));
+      });
+      return fileDatabase;
+    }
+
+    async function fileTransaction(mode, operation) {
+      const db = await openFileDatabase();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction("files", mode);
+        const request = operation(transaction.objectStore("files"));
+        transaction.oncomplete = () => resolve(request.result);
+        transaction.onabort = () => reject(new Error("The file could not be saved or read."));
+      });
+    }
+
+    async function listDownloads() {
+      let drafts = [];
+      try { drafts = await fileTransaction("readonly", store => store.getAll()); } catch {}
+      const publishedIds = new Set(publishedFiles.map(file => file.id));
+      const deleted = new Set(drafts.filter(file => file.deleted).map(file => file.id));
+      return [...publishedFiles.filter(file => !deleted.has(file.id)),
+        ...drafts.filter(file => !file.deleted && !publishedIds.has(file.id))];
+    }
+
+    function saveDownload(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function novaDownloadUrl() {
+      const configured = document.querySelector('meta[name="nova-release-repository"]').content.trim();
+      let repository = configured;
+      if (!repository && location.hostname.endsWith(".github.io")) {
+        const owner = location.hostname.split(".")[0];
+        const project = location.pathname.split("/")[1];
+        repository = owner + "/" + (project && project !== "index.html" ? project : location.hostname);
+      }
+      return repository
+        ? "https://github.com/" + repository + "/releases/latest/download/Nova.exe"
+        : new URL("release/rounded/Nova.exe", document.baseURI).href;
+    }
+
+    function openDownload(file) {
+      if (!hasAccess(sessionUser())) {
+        refreshDownloads();
+        return;
+      }
+      if (file.kind === "windows-release") {
+        const link = document.createElement("a");
+        link.href = novaDownloadUrl();
+        link.download = "Nova.exe";
+        document.body.append(link);
+        link.click();
+        link.remove();
+        return;
+      }
+      const content = file.blob || new Blob([Uint8Array.from(atob(file.data), char => char.charCodeAt(0))], { type: "application/octet-stream" });
+      saveDownload(content, file.name);
+    }
+
+    async function refreshDownloads() {
+      const ticket = ++downloadRevision;
+      const list = $("#player-downloads");
+      const info = $("#download-empty");
+      const active = hasAccess(sessionUser());
+      $("#download-renew").hidden = active;
+      if (!active) {
+        list.replaceChildren();
+        info.textContent = "No active license. Redeem a key to access downloads.";
+        return;
+      }
+      const files = await listDownloads();
+      if (ticket !== downloadRevision || playerPage !== "downloads" || !hasAccess(sessionUser())) return;
+      info.textContent = files.length ? "" : "No downloads have been published yet.";
+      list.replaceChildren(...files.map(file => {
+        const item = document.createElement("li");
+        const name = document.createElement("span");
+        const button = document.createElement("button");
+        name.textContent = file.name;
+        button.type = "button";
+        button.className = "button";
+        button.textContent = file.kind === "windows-release" ? "Download Nova.exe" : "Download";
+        button.setAttribute("aria-label", "Download " + file.name);
+        button.addEventListener("click", () => openDownload(file));
+        item.append(name, button);
+        return item;
+      }));
+    }
+
+    async function renderAdminDownloads() {
+      const ticket = revision;
+      const files = await listDownloads();
+      if (!adminUnlocked || adminTab !== "files" || revision !== ticket || !panel.open) return;
+      $("#admin-downloads").replaceChildren(...files.map(file => {
+        const item = document.createElement("li");
+        const name = document.createElement("span");
+        const status = document.createElement("small");
+        name.textContent = file.name;
+        status.textContent = file.blob ? "Ready to publish" : "Published";
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "button";
+        remove.textContent = "Delete";
+        remove.setAttribute("aria-label", "Delete " + file.name);
+        remove.onclick = async () => {
+          if (!adminUnlocked || !window.confirm('Delete "' + file.name + '" from Downloads?')) return;
+          remove.disabled = true;
+          try {
+            const published = publishedFiles.some(entry => entry.id === file.id);
+            await fileTransaction("readwrite", store => published
+              ? store.put({id: file.id, deleted: true}) : store.delete(file.id));
+            await renderAdminDownloads();
+            if (playerPage === "downloads") await refreshDownloads();
+            if (adminUnlocked) showNotice(published ? "File removed. Export and publish the updated page to apply this change." : "File deleted.");
+          } catch (error) { remove.disabled = false; showNotice(error.message, true); }
+        };
+        item.append(name, status, remove);
+        return item;
+      }));
+      $("#export-page").hidden = !files.some(file => file.blob) && files.length === publishedFiles.length;
+    }
+
+    function readFileAsBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.slice(reader.result.indexOf(",") + 1));
+        reader.onerror = () => reject(new Error("A file could not be read for export."));
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    handleForm("#upload-form", async ({ download }, isCurrent) => {
+      if (!adminUnlocked || !download?.name) throw new Error("Choose a file to add.");
+      await fileTransaction("readwrite", store => store.put({ id: randomHex(12), name: download.name, blob: download }));
+      if (!isCurrent() || adminTab !== "files") return;
+      $("#upload-form").reset();
+      await renderAdminDownloads();
+      if (isCurrent()) showNotice("File added. Export your updated page to publish it.");
+    });
+
+    $("#export-page").addEventListener("click", async event => {
+      if (!adminUnlocked) return;
+      const button = event.currentTarget;
+      const ticket = revision;
+      button.disabled = true;
+      try {
+        const files = await listDownloads();
+        const bundle = await Promise.all(files.map(async file => file.kind === "windows-release" ? file : ({
+          id: file.id, name: file.name, data: file.data ?? await readFileAsBase64(file.blob)
+        })));
+        if (!adminUnlocked || !panel.open || ticket !== revision) return;
+        const page = publicationSource.cloneNode(true);
+        page.querySelector("#published-downloads").textContent = JSON.stringify(bundle).replaceAll("<", "\\u003c");
+        saveDownload(new Blob(["<!doctype html>\n" + page.outerHTML], { type: "text/html;charset=utf-8" }), "index.html");
+        showNotice("Updated index.html exported.");
+      } catch (error) {
+        if (ticket === revision && panel.open) showNotice(error.message, true);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    document.querySelectorAll("[data-open]").forEach(button => {
+      button.addEventListener("click", () => {
+        try {
+          const user = refreshSession();
+          if (user) showAccount();
+          else setPane(button.dataset.open);
+        } catch {
+          setPane(button.dataset.open, "Your browser has blocked local storage for accounts and licenses.", true);
+        }
+      });
+    });
+    document.querySelectorAll("[data-show]").forEach(button => {
+      button.addEventListener("click", () => setPane(button.dataset.show));
+    });
+    document.querySelectorAll("[data-back]").forEach(button => button.addEventListener("click", leaveAdmin));
+    document.addEventListener("keydown", event => {
+      if (event.key.toLowerCase() !== "p" || event.repeat || event.isComposing || event.ctrlKey || event.altKey || event.metaKey) return;
+      if (event.target.closest?.('input, select, textarea, [contenteditable="true"]')) return;
+      let from;
+      if (panel.open && ["register", "login"].includes(currentPane)) from = currentPane;
+      if (!panel.open) {
+        try { if (refreshSession()) from = "account"; } catch {}
+      }
+      if (!from) return;
+      event.preventDefault();
+      playSound();
+      openAdmin(from);
+    });
+
+    $("#close").addEventListener("click", () => panel.close());
+    panel.addEventListener("cancel", event => {
+      if (activePicker) {
+        event.preventDefault();
+        activePicker.close(true);
+        return;
+      }
+      if (!keyAction && !openKeyMenu) return;
+      event.preventDefault();
+      if (keyAction) closeKeyAction(true);
+      else closeKeyMenu(true);
+    });
+    panel.addEventListener("click", event => {
+      if (event.target !== panel) return;
+      const bounds = panel.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right ||
+          event.clientY < bounds.top || event.clientY > bounds.bottom) panel.close();
+    });
+    panel.addEventListener("close", () => {
+      closeAdminSession();
+      activePicker?.close();
+      closeKeyMenu();
+      closeKeyAction();
+      currentKey = "";
+      revision++;
+      document.querySelectorAll('input[type="password"]').forEach(input => { input.value = ""; });
+    });
+    $("#logout").addEventListener("click", async event => {
+      const button = event.currentTarget;
+      button.disabled = true;
+      try {
+        const { error } = await requireAuth().signOut({ scope: "local" });
+        if (error) throw error;
+        window.scrollTo(0, 0);
+        setPane("login", "Signed out.");
+      } catch (error) {
+        showPlayerNotice(error.message, true);
+      } finally {
+        button.disabled = false;
+      }
+    });
+    $("#copy-key").addEventListener("click", () => {
+      const field = $("#key-output");
+      copyKey(field.value, field);
+    });
+
+    let soundEnabled = true;
+    let audio;
+    const soundButton = $("#sound");
+    function syncSound() {
+      soundButton.setAttribute("aria-pressed", String(soundEnabled));
+    }
+
+    function playSound() {
+      if (!soundEnabled || !window.AudioContext) return;
+      try {
+        audio ||= new AudioContext();
+        if (audio.state === "suspended") audio.resume().catch(() => {});
+        const time = audio.currentTime;
+        const note = audio.createOscillator();
+        const gain = audio.createGain();
+        note.type = "sine";
+        note.frequency.setValueAtTime(560, time);
+        note.frequency.exponentialRampToValueAtTime(335, time + .085);
+        gain.gain.setValueAtTime(.0001, time);
+        gain.gain.exponentialRampToValueAtTime(.038, time + .012);
+        gain.gain.exponentialRampToValueAtTime(.0001, time + .12);
+        note.connect(gain).connect(audio.destination);
+        note.start(time);
+        note.stop(time + .125);
+      } catch {
+        // Audio is optional if the browser blocks it.
+      }
+    }
+
+    soundButton.addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      syncSound();
+      try { localStorage.setItem(soundKey, soundEnabled ? "on" : "off"); } catch {}
+    });
+    document.addEventListener("click", event => {
+      if (event.target.closest("button, a")) playSound();
+    });
+    function updateNavigation() {
+      const target = ["#features", "#licenses", "#faq"].includes(location.hash) ? location.hash : "#start";
+      document.querySelectorAll("nav a").forEach(link => {
+        if (link.hash === target) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      });
+    }
+    window.addEventListener("hashchange", updateNavigation);
+    window.addEventListener("focus", () => {
+      try { refreshSession(); } catch {}
+      refreshAdmin();
+    });
+    window.addEventListener("storage", event => {
+      if (event.key !== databaseKey && event.key !== null) return;
+      try { refreshSession(); } catch {}
+      refreshAdmin();
+    });
+    try {
+      soundEnabled = localStorage.getItem(soundKey) !== "off";
+    } catch {}
+    auth?.onAuthStateChange(event => {
+      if (event !== "SIGNED_OUT") return;
+      activeAccountId = undefined;
+      refreshSession();
+    });
+    async function restoreSession() {
+      if (!auth) return;
+      const { data, error } = await auth.getUser();
+      if (error || !data.user?.user_metadata?.username || authFormBusy || panel.open) return;
+      const account = await saveAuthAccount(data.user);
+      if (authFormBusy || panel.open) return;
+      activeAccountId = account.authId;
+      showAccount();
+    }
+    restoreSession().catch(() => {});
+    syncSound();
+    updateNavigation();
+
+  </script>
+</body>
+</html>
